@@ -114,6 +114,10 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	private func makeSUT() -> FeedStore {
 		let sut = InMemoryFeedStore()
+                
+        var weakSut: FeedStore? = sut
+        weakSut = nil
+        XCTAssertNil(weakSut)
         
         return sut
 	}
