@@ -7,26 +7,32 @@ import FeedStoreChallenge
 
 class InMemoryFeedStore: FeedStore {
     
+    private let queue = DispatchQueue(label: "\(InMemoryFeedStore.self)Queue", attributes: .concurrent)
+    
     private var cache: (feed: [LocalFeedImage], timestamp: Date)?
     
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        cache = nil
-        
-        completion(nil)
+        queue.async(flags: .barrier) { [unowned self] in
+            self.cache = nil
+            completion(nil)
+        }
     }
     
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        cache = (feed, timestamp)
-        
-        completion(nil)
+        queue.async(flags: .barrier) { [unowned self] in
+            self.cache = (feed, timestamp)
+            completion(nil)
+        }
     }
     
     func retrieve(completion: @escaping RetrievalCompletion) {
-        guard let cache = cache else {
-            return completion(.empty)
+        queue.async { [unowned self] in
+            guard let cache = self.cache else {
+                return completion(.empty)
+            }
+            
+            completion(.found(feed: cache.feed, timestamp: cache.timestamp))
         }
-        
-        completion(.found(feed: cache.feed, timestamp: cache.timestamp))
     }
 }
 
