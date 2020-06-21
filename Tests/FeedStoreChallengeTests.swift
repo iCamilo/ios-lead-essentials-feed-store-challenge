@@ -21,7 +21,9 @@ class InMemoryFeedStore: FeedStore {
     }
     
     func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        queue.async(flags: .barrier) { [unowned self] in
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            
             self.cache = (feed, timestamp)
             completion(nil)
         }
@@ -128,6 +130,18 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
         sut = nil
 
         XCTAssertEqual(deleteCompletionCallCount, 0, "On store deallocation, delete operation SHOULD NOT deliver any result")
+    }
+    
+    func test_onStoreDeallocation_insert_doesNotDeliverResults() {
+        var sut: InMemoryFeedStore? = InMemoryFeedStore()
+
+        var insertCompletionCallCount = 0
+        sut?.insert(uniqueImageFeed(), timestamp: Date()) { _ in
+            insertCompletionCallCount += 1
+        }
+        sut = nil
+
+        XCTAssertEqual(insertCompletionCallCount, 0, "On store deallocation, insert operation SHOULD NOT deliver any result")
     }
 	
 	// - MARK: Helpers
