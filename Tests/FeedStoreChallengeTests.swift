@@ -30,7 +30,9 @@ class InMemoryFeedStore: FeedStore {
     }
     
     func retrieve(completion: @escaping RetrievalCompletion) {
-        queue.async { [unowned self] in
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            
             guard let cache = self.cache else {
                 return completion(.empty)
             }
@@ -142,6 +144,18 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
         sut = nil
 
         XCTAssertEqual(insertCompletionCallCount, 0, "On store deallocation, insert operation SHOULD NOT deliver any result")
+    }
+    
+    func test_onStoreDeallocation_retrieve_doesNotDeliverResults() {
+        var sut: InMemoryFeedStore? = InMemoryFeedStore()
+
+        var retrieveCompletionCallCount = 0
+        sut?.retrieve { _ in
+            retrieveCompletionCallCount += 1
+        }
+        sut = nil
+
+        XCTAssertEqual(retrieveCompletionCallCount, 0, "On store deallocation, retrieve operation SHOULD NOT deliver any result")
     }
 	
 	// - MARK: Helpers
