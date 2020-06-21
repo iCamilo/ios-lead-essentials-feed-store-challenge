@@ -12,7 +12,9 @@ class InMemoryFeedStore: FeedStore {
     private var cache: (feed: [LocalFeedImage], timestamp: Date)?
     
     func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        queue.async(flags: .barrier) { [unowned self] in
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            
             self.cache = nil
             completion(nil)
         }
@@ -115,6 +117,18 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 
 		assertThatSideEffectsRunSerially(on: sut)
 	}
+    
+    func test_onStoreDeallocation_delete_doesNotDeliverResults() {
+        var sut: InMemoryFeedStore? = InMemoryFeedStore()
+
+        var deleteCompletionCallCount = 0
+        sut?.deleteCachedFeed { _ in
+            deleteCompletionCallCount += 1
+        }
+        sut = nil
+
+        XCTAssertEqual(deleteCompletionCallCount, 0, "On store deallocation, delete operation SHOULD NOT deliver any result")
+    }
 	
 	// - MARK: Helpers
 	
