@@ -124,38 +124,29 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
     
     func test_onStoreDeallocation_delete_doesNotDeliverResults() {
         var sut: InMemoryFeedStore? = InMemoryFeedStore()
-
-        var deleteCompletionCallCount = 0
+        
         sut?.deleteCachedFeed { _ in
-            deleteCompletionCallCount += 1
+            XCTFail("On store deallocation, delete operation SHOULD NOT deliver any result")
         }
         sut = nil
-
-        XCTAssertEqual(deleteCompletionCallCount, 0, "On store deallocation, delete operation SHOULD NOT deliver any result")
     }
     
     func test_onStoreDeallocation_insert_doesNotDeliverResults() {
         var sut: InMemoryFeedStore? = InMemoryFeedStore()
-
-        var insertCompletionCallCount = 0
+        
         sut?.insert(uniqueImageFeed(), timestamp: Date()) { _ in
-            insertCompletionCallCount += 1
+            XCTFail("On store deallocation, insert operation SHOULD NOT deliver any result")
         }
         sut = nil
-
-        XCTAssertEqual(insertCompletionCallCount, 0, "On store deallocation, insert operation SHOULD NOT deliver any result")
     }
     
     func test_onStoreDeallocation_retrieve_doesNotDeliverResults() {
         var sut: InMemoryFeedStore? = InMemoryFeedStore()
-
-        var retrieveCompletionCallCount = 0
+        
         sut?.retrieve { _ in
-            retrieveCompletionCallCount += 1
+            XCTFail("On store deallocation, retrieve operation SHOULD NOT deliver any result")
         }
         sut = nil
-
-        XCTAssertEqual(retrieveCompletionCallCount, 0, "On store deallocation, retrieve operation SHOULD NOT deliver any result")
     }
 	
 	// - MARK: Helpers
