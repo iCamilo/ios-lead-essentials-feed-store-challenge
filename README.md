@@ -73,7 +73,7 @@ Additional tests are included to validate that at `InMemoryFeedStore` deallocati
 
 **Context**
 
-After adding a private queueu to the `InMemoryFeedCache` to allow operations to run in a background, the corresponding tests were added to validate that no response is deliverd after store deallocation:
+As `InMemoryFeedStore` operations are dispatched to an `async` block where `self` is captured, I added the corresponding tests to validate that no response is delivered after the store is deallocated:
 
 ```
 test_onStoreDeallocation_delete_doesNotDeliverResults
@@ -81,10 +81,9 @@ test_onStoreDeallocation_insert_doesNotDeliverResults
 test_onStoreDeallocation_retrieve_doesNotDeliverResults
 ```
 
-While running the test suite consecutively to validate tests stability, the mentioned tests failed randomly. In order to understand what could be causing the problem, I did gather the info shown in the attached images. They show how the test suite, and in particular the `doesNotDeliverResults`  tests,  behaves when running the tests consecutively : 10 and 100 times in 10 iterations, so 1st iteration run it 10 or 100 times, 2nd iteration the same and so on.
+While running the test suite repeatedly to validate tests stability, the mentioned tests failed randomly. In order to understand what could be causing the problem, I did gather the info shown in the attached images. They show how the test suite, and in particular the `doesNotDeliverResults`  tests,  behaves when running the tests repeatedly: 10 iterations sample data each one running the tests 10 or 100 times.
 
 As you can see, some tests failures are reported. The failures are not consistent and do not show any apparent pattern. All of the `doesNotDeliverResults` tests failed at some point.
-It didn't happen to me while I was  in the TDD flow of implementation, but i guess it was because I was not running them 10 times or so each time.
 
 ![Failing tests after running 10 times](./_images/tests10iterations.png)
 
@@ -98,7 +97,7 @@ Looking at the code and the tests, the only explanation that I have is that some
 
 **Important points**
 
-* It didn't happen to me while I was TDDing the solution. I did notice this after completing the implementation and performing a step I always do additional to the implementation, running the tests repeatedly.
+* It didn't happen to me while I was TDDing the solution, but if my theory is correct it was just matter of time.
 * All of the `doesNotDeliverResults` tests failed at some point.
 
 **Open Questions**
