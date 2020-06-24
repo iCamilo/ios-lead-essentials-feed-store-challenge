@@ -79,17 +79,7 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     }
     
     // - MARK: Setup tests would be deleted once setup is complete
-    
-    func test_modelExists_init_doesNotThrowError() {
-        do {
-            let modelBundle = Bundle(for: CoreDataFeedStore.self)
-            let sut = try CoreDataFeedStore(bundle: modelBundle)
-            XCTAssertNotNil(sut, "sut should not be nil if the model exists")
-        } catch {
-            XCTFail("If model file does exist, no error should be thrown")
-        }
-    }
-    
+        
     func test_persistenStoreExist_init_doesNotThrowError() {
         do {
             let modelBundle = Bundle(for: CoreDataFeedStore.self)
