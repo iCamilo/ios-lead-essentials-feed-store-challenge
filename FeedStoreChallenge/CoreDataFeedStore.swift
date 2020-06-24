@@ -2,10 +2,24 @@
 //  Copyright © 2020 Essential Developer. All rights reserved.
 
 import Foundation
+import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
+        
+    public enum Error: Swift.Error {
+        case modelNotFound
+    }
     
-    public init() { }
+    public init() {}
+    
+    public init(bundle: Bundle) throws {
+        guard let managedModelURL = bundle.url(forResource: "FeedStore", withExtension: "momd") else {
+            throw Error.modelNotFound
+        }
+        guard let _ = NSManagedObjectModel(contentsOf: managedModelURL) else {
+            throw Error.modelNotFound
+        }
+    }
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         

@@ -77,6 +77,18 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
 //
 //        assertThatSideEffectsRunSerially(on: sut)
     }
+    
+    // - MARK: Setup tests would be deleted once setup is complete
+    
+    func test_modelExists_init_doesNotThrowError() {
+        do {
+            let modelBundle = Bundle(for: CoreDataFeedStore.self)
+            let sut = try CoreDataFeedStore(bundle: modelBundle)
+            XCTAssertNotNil(sut, "sut should not be nil if the model exists")
+        } catch {
+            XCTFail("If model file does exist, no error should be thrown")
+        }
+    }
 
     // - MARK: Helpers
     
@@ -87,3 +99,4 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     }
     
 }
+
