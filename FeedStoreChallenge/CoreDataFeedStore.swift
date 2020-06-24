@@ -5,7 +5,8 @@ import Foundation
 import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
-        
+    private let modelName = "FeedStore"
+    
     public enum Error: Swift.Error {
         case modelNotFound
     }
@@ -13,10 +14,7 @@ public final class CoreDataFeedStore: FeedStore {
     public init() {}
     
     public init(bundle: Bundle) throws {
-        guard let managedModelURL = bundle.url(forResource: "FeedStore", withExtension: "momd") else {
-            throw Error.modelNotFound
-        }
-        guard let _ = NSManagedObjectModel(contentsOf: managedModelURL) else {
+        guard let _ = NSManagedObjectModel.with(name: modelName, in: bundle) else {
             throw Error.modelNotFound
         }
     }
@@ -31,5 +29,19 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
         completion(.empty)
+    }
+}
+
+internal extension NSManagedObjectModel {
+    private static var coreDataModelsExtension: String {
+        return "momd"
+    }
+    
+    static func with(name: String, in bundle: Bundle) -> NSManagedObjectModel? {
+        guard let modelURL = bundle.url(forResource: name, withExtension: coreDataModelsExtension) else {
+                return nil
+        }
+        
+        return NSManagedObjectModel(contentsOf: modelURL)
     }
 }
