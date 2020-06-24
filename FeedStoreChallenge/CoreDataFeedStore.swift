@@ -6,15 +6,10 @@ import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
     private let modelName = "FeedStore"
-    private var persistenceStoreDescriptions: String {
+    private var persistenceStoreDescription: String {
         return container.persistentStoreDescriptions.description
     }
-    
-    public enum Error: Swift.Error {
-        case modelNotFound
-        case loadingPersistentStores
-    }
-    
+            
     public let container: NSPersistentContainer
     
     public init() {
@@ -39,9 +34,14 @@ public final class CoreDataFeedStore: FeedStore {
 }
 
 internal extension NSPersistentContainer {
+    enum CoreDataStackConfigurationError: Error {
+        case modelNotFound
+        case loadingPersistentStores
+    }
+    
     static func load(modelName name: String, in bundle: Bundle) throws -> NSPersistentContainer {
         guard let model = NSManagedObjectModel.with(name: name, in: bundle) else {
-            throw CoreDataFeedStore.Error.modelNotFound
+            throw CoreDataStackConfigurationError.modelNotFound
         }
         
         var loadPersistenceError: Swift.Error?
@@ -51,7 +51,7 @@ internal extension NSPersistentContainer {
         }
         
         guard loadPersistenceError == nil else {
-            throw CoreDataFeedStore.Error.loadingPersistentStores
+            throw CoreDataStackConfigurationError.loadingPersistentStores
         }
         
         return container
