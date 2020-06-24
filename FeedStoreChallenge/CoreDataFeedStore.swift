@@ -22,21 +22,7 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public init(bundle: Bundle) throws {
-        guard let model = NSManagedObjectModel.with(name: modelName, in: bundle) else {
-            throw Error.modelNotFound
-        }
-        
-        var loadPersistenceError: Swift.Error?
-        container = NSPersistentContainer(name: modelName, managedObjectModel: model)
-        container.loadPersistentStores { storeDescription, error in
-            guard error == nil else {
-                return loadPersistenceError = error
-            }
-        }
-        
-        guard loadPersistenceError == nil else {
-            throw Error.loadingPersistentStores
-        }        
+        container = try NSPersistentContainer.load(modelName: modelName, in: bundle)
     }
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
@@ -49,6 +35,26 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
         completion(.empty)
+    }
+}
+
+internal extension NSPersistentContainer {
+    static func load(modelName name: String, in bundle: Bundle) throws -> NSPersistentContainer {
+        guard let model = NSManagedObjectModel.with(name: name, in: bundle) else {
+            throw CoreDataFeedStore.Error.modelNotFound
+        }
+        
+        var loadPersistenceError: Swift.Error?
+        let container = NSPersistentContainer(name: name, managedObjectModel: model)
+        container.loadPersistentStores { _, error in
+            loadPersistenceError = error
+        }
+        
+        guard loadPersistenceError == nil else {
+            throw CoreDataFeedStore.Error.loadingPersistentStores
+        }
+        
+        return container
     }
 }
 
