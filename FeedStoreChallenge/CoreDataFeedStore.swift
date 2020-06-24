@@ -6,17 +6,37 @@ import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
     private let modelName = "FeedStore"
+    private var persistenceStoreDescriptions: String {
+        return container.persistentStoreDescriptions.description
+    }
     
     public enum Error: Swift.Error {
         case modelNotFound
+        case loadingPersistentStores
     }
     
-    public init() {}
+    public let container: NSPersistentContainer
+    
+    public init() {
+        container = NSPersistentContainer(name: modelName)
+    }
     
     public init(bundle: Bundle) throws {
-        guard let _ = NSManagedObjectModel.with(name: modelName, in: bundle) else {
+        guard let model = NSManagedObjectModel.with(name: modelName, in: bundle) else {
             throw Error.modelNotFound
         }
+        
+        var loadPersistenceError: Swift.Error?
+        container = NSPersistentContainer(name: modelName, managedObjectModel: model)
+        container.loadPersistentStores { storeDescription, error in
+            guard error == nil else {
+                return loadPersistenceError = error
+            }
+        }
+        
+        guard loadPersistenceError == nil else {
+            throw Error.loadingPersistentStores
+        }        
     }
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
