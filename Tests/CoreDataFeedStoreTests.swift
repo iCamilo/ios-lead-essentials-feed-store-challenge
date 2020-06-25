@@ -78,32 +78,11 @@ class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
 //        assertThatSideEffectsRunSerially(on: sut)
     }
     
-    // - MARK: Setup tests would be deleted once setup is complete
-        
-    func test_persistenStoreExist_init_doesNotThrowError() {
-        do {
-            let modelBundle = Bundle(for: CoreDataFeedStore.self)
-            let sut = try CoreDataFeedStore(bundle: modelBundle)
-            XCTAssertNotNil(sut.container, "sut container should not be nil if the persistence store exists")
-        } catch {
-            XCTFail("If model file does exist, no error should be thrown")
-        }
-    }
-    
-    func test_persistenStoreExist_init_managedContextExists() {
-        do {
-            let modelBundle = Bundle(for: CoreDataFeedStore.self)
-            let sut = try CoreDataFeedStore(bundle: modelBundle)
-            XCTAssertNotNil(sut.context, "sut context should not be nil if the persistence store exists")
-        } catch {
-            XCTFail("If model file does exist, no error should be thrown")
-        }
-    }
-
     // - MARK: Helpers
     
     private func makeSUT() -> FeedStore {
-        let sut = CoreDataFeedStore()
+        let storeBundle = Bundle(for: CoreDataFeedStore.self)
+        let sut = try! CoreDataFeedStore(bundle: storeBundle)
         
         return sut
     }

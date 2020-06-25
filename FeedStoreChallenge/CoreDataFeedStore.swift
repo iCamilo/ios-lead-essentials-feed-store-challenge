@@ -10,15 +10,10 @@ public final class CoreDataFeedStore: FeedStore {
         return container.persistentStoreDescriptions.description
     }
             
-    public let container: NSPersistentContainer
-    public let context: NSManagedObjectContext
-    
-    public init() {
-        container = NSPersistentContainer(name: modelName)
-        context = container.newBackgroundContext()
-    }
-    
-    public init(bundle: Bundle) throws {
+    private let container: NSPersistentContainer
+    private let context: NSManagedObjectContext
+        
+    public init(bundle: Bundle = .main) throws {
         container = try NSPersistentContainer.load(modelName: modelName, in: bundle)
         context = container.newBackgroundContext()
     }
