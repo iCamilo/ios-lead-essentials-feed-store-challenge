@@ -37,14 +37,14 @@ public final class CoreDataFeedStore: FeedStore {
 }
 
 internal extension NSPersistentContainer {
-    enum CoreDataStackConfigurationError: Error {
+    enum ConfigurationError: Error {
         case modelNotFound
         case loadingPersistentStores(Error)
     }
     
     static func load(modelName name: String, in bundle: Bundle) throws -> NSPersistentContainer {
         guard let model = NSManagedObjectModel.with(name: name, in: bundle) else {
-            throw CoreDataStackConfigurationError.modelNotFound
+            throw ConfigurationError.modelNotFound
         }
                 
         let container = NSPersistentContainer(name: name, managedObjectModel: model)
@@ -60,7 +60,7 @@ internal extension NSPersistentContainer {
         }
         
         if let loadStoresError = loadStoresError {
-            throw CoreDataStackConfigurationError.loadingPersistentStores(loadStoresError)
+            throw ConfigurationError.loadingPersistentStores(loadStoresError)
         }
     }
 }
