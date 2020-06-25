@@ -20,11 +20,49 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
+        let context = self.context
         
+        context.perform {
+            let cache = ManagedCache(context: context)
+            cache.timestamp = timestamp
+            cache.images = NSOrderedSet(array: feed.map {
+                let managedFeedImage = ManagedFeedImage(context: context)
+                managedFeedImage.id = $0.id
+                managedFeedImage.url = $0.url
+                managedFeedImage.imageDescription = $0.description
+                managedFeedImage.location = $0.description
+                
+                return managedFeedImage
+            })
+            
+            do {
+                try context.save()
+                completion(nil)
+            } catch {
+                completion(error)
+            }
+        }
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
-        completion(.empty)
+        let context = self.context
+        context.perform {
+            do {
+                let requestCache = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
+                guard let managedCache = try context.fetch(requestCache).first else {
+                    return completion(.empty)
+                }
+                
+                let timestamp = managedCache.timestamp
+                let localFeed = managedCache.images.compactMap{ $0 as? ManagedFeedImage }.map {
+                    return LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)
+                }
+                
+                completion(.found(feed: localFeed, timestamp: timestamp))
+        } catch {
+            completion(.failure(error))
+        }
+        }
     }
 }
 
@@ -74,6 +112,7 @@ internal extension NSManagedObjectModel {
     }
 }
 
+@objc(ManagedFeedImage)
 private class ManagedFeedImage: NSManagedObject {
     @NSManaged var id: UUID
     @NSManaged var imageDescription: String?
@@ -82,6 +121,7 @@ private class ManagedFeedImage: NSManagedObject {
     @NSManaged var cache: ManagedCache
 }
 
+@objc(ManagedCache)
 private class ManagedCache: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var images: NSOrderedSet
