@@ -46,18 +46,22 @@ internal extension NSPersistentContainer {
         guard let model = NSManagedObjectModel.with(name: name, in: bundle) else {
             throw CoreDataStackConfigurationError.modelNotFound
         }
-        
-        var loadPersistenceError: Error?
+                
         let container = NSPersistentContainer(name: name, managedObjectModel: model)
-        container.loadPersistentStores { _, error in
-            loadPersistenceError = error
-        }
-        
-        if let loadPersistenceError = loadPersistenceError {
-            throw CoreDataStackConfigurationError.loadingPersistentStores(loadPersistenceError)
-        }
+        try container.loadPersistentStores()
         
         return container
+    }
+    
+    private func loadPersistentStores() throws {
+        var loadStoresError: Error?
+        loadPersistentStores { _, error in
+            loadStoresError = error
+        }
+        
+        if let loadStoresError = loadStoresError {
+            throw CoreDataStackConfigurationError.loadingPersistentStores(loadStoresError)
+        }
     }
 }
 
