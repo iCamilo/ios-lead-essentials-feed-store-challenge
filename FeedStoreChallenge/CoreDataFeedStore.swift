@@ -41,8 +41,7 @@ public final class CoreDataFeedStore: FeedStore {
         
         context.perform {
             do {
-                let requestCache = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
-                guard let managedCache = try context.fetch(requestCache).first else {
+                guard let managedCache = try CoreDataFeedStore.retrieveAllCaches(in: context).first else {
                     return completion(.empty)
                 }
                 
