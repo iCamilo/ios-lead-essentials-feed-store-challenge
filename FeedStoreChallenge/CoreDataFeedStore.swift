@@ -36,6 +36,7 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
         let context = self.context
+        
         context.perform {
             do {
                 let requestCache = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
@@ -43,15 +44,12 @@ public final class CoreDataFeedStore: FeedStore {
                     return completion(.empty)
                 }
                 
-                let timestamp = managedCache.timestamp
-                let localFeed = managedCache.images.compactMap{ $0 as? ManagedFeedImage }.map {
-                    return LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)
-                }
+                let retrieveResult = managedCache.mapTo()
                 
-                completion(.found(feed: localFeed, timestamp: timestamp))
-        } catch {
-            completion(.failure(error))
-        }
+                completion(.found(feed: retrieveResult.feed, timestamp: retrieveResult.timestamp))
+            } catch {
+                completion(.failure(error))
+            }
         }
     }
 }
@@ -119,6 +117,14 @@ private class ManagedFeedImage: NSManagedObject {
         
         return managed
     }
+        
+    func mapTo() -> LocalFeedImage {
+        return LocalFeedImage(id: id,
+                              description: imageDescription,
+                              location: location,
+                              url: url)
+    }
+        
 }
 
 @objc(ManagedCache)
@@ -135,5 +141,13 @@ private class ManagedCache: NSManagedObject {
         })
         
         return cache
+    }
+    
+    func mapTo() -> (feed: [LocalFeedImage], timestamp: Date){
+        let feed = images.compactMap{ $0 as? ManagedFeedImage }.map {
+            return $0.mapTo()
+        }
+        
+        return(feed: feed, timestamp: self.timestamp)
     }
 }
