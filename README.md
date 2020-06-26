@@ -1,6 +1,6 @@
 # The `FeedStore` challenge - iOSLeadEssentials.com
 
-![](https://github.com/essentialdevelopercom/ios-lead-essentials-feed-store-challenge/workflows/CI/badge.svg)
+[![Build Status](https://travis-ci.com/iCamilo/ios-lead-essentials-feed-store-challenge.svg?branch=master)](https://travis-ci.com/iCamilo/ios-lead-essentials-feed-store-challenge)
 
 You are called to build your own persistence infrastructure implementation by creating a new component that conforms to the `<FeedStore>` protocol.
 
