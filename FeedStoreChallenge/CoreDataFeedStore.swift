@@ -20,7 +20,7 @@ public final class CoreDataFeedStore: FeedStore {
         
         context.perform {
             do {
-                try CoreDataFeedStore.clearCaches(in: context)                
+                try CoreDataFeedStore.deleteAllManagedCache(in: context)
                 
                 completion(nil)
             } catch {
@@ -34,7 +34,7 @@ public final class CoreDataFeedStore: FeedStore {
         
         context.perform {
             do {
-                try CoreDataFeedStore.clearCaches(in: context)
+                try CoreDataFeedStore.deleteAllManagedCache(in: context)
                 
                 ManagedCache.mapFrom((timestamp: timestamp, images: feed), in: context)
                 try context.save()
@@ -65,7 +65,7 @@ public final class CoreDataFeedStore: FeedStore {
         }
     }
             
-    private static func clearCaches(in context: NSManagedObjectContext) throws {
+    private static func deleteAllManagedCache(in context: NSManagedObjectContext) throws {
         let request = NSFetchRequest<ManagedCache>(entityName: ManagedCache.entity().name!)
         let caches = try context.fetch(request)
         
