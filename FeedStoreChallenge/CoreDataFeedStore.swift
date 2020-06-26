@@ -21,6 +21,9 @@ public final class CoreDataFeedStore: FeedStore {
         context.perform {
             do {
                 try CoreDataFeedStore.deleteAllManagedCache(in: context)
+                if context.hasChanges {
+                    try context.save()
+                }
                 
                 completion(nil)
             } catch {
@@ -37,7 +40,9 @@ public final class CoreDataFeedStore: FeedStore {
                 try CoreDataFeedStore.deleteAllManagedCache(in: context)
                 
                 ManagedCache.mapFrom((timestamp: timestamp, images: feed), in: context)
-                try context.save()
+                if context.hasChanges {
+                    try context.save()
+                }
                 
                 completion(nil)
             } catch {
