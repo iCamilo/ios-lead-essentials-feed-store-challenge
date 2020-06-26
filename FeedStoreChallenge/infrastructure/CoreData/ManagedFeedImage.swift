@@ -10,7 +10,9 @@ final class ManagedFeedImage: NSManagedObject {
     @NSManaged var location: String?
     @NSManaged var url: URL
     @NSManaged var cache: ManagedCache
-    
+}
+
+extension ManagedFeedImage {
     static func mapFrom(_ localImage: LocalFeedImage, in context: NSManagedObjectContext) -> ManagedFeedImage {
         let managed = ManagedFeedImage(context: context)
         managed.id = localImage.id
@@ -27,5 +29,4 @@ final class ManagedFeedImage: NSManagedObject {
                               location: location,
                               url: url)
     }
-        
 }

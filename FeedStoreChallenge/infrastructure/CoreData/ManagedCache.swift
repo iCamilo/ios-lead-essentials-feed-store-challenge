@@ -7,7 +7,9 @@ import CoreData
 final class ManagedCache: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var images: NSOrderedSet
-    
+}
+
+extension ManagedCache {
     @discardableResult
     static func mapFrom(_ info: (timestamp: Date, images: [LocalFeedImage]), in context: NSManagedObjectContext) -> ManagedCache {
         let cache = ManagedCache(context: context)
