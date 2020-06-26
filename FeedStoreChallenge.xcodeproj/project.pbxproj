@@ -23,6 +23,7 @@
 		5BA2162524A5834100239D51 /* XCTestCase+TrackMemoryLeaks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA2162424A5834100239D51 /* XCTestCase+TrackMemoryLeaks.swift */; };
 		5BA2162A24A58A0100239D51 /* ManagedFeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA2162924A58A0100239D51 /* ManagedFeedImage.swift */; };
 		5BA2162C24A58A5900239D51 /* ManagedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA2162B24A58A5900239D51 /* ManagedCache.swift */; };
+		5BA2162E24A58B9800239D51 /* CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BA2162D24A58B9800239D51 /* CoreDataHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		5BA2162424A5834100239D51 /* XCTestCase+TrackMemoryLeaks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+TrackMemoryLeaks.swift"; sourceTree = "<group>"; };
 		5BA2162924A58A0100239D51 /* ManagedFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedFeedImage.swift; sourceTree = "<group>"; };
 		5BA2162B24A58A5900239D51 /* ManagedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedCache.swift; sourceTree = "<group>"; };
+		5BA2162D24A58B9800239D51 /* CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 				5BA2161E24A2D39500239D51 /* CoreDataFeedStore.swift */,
 				5BA2162924A58A0100239D51 /* ManagedFeedImage.swift */,
 				5BA2162B24A58A5900239D51 /* ManagedCache.swift */,
+				5BA2162D24A58B9800239D51 /* CoreDataHelpers.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -281,6 +284,7 @@
 				08CE2BA82285BCC600183A1B /* LocalFeedImage.swift in Sources */,
 				5BA2162A24A58A0100239D51 /* ManagedFeedImage.swift in Sources */,
 				5BA2161F24A2D39500239D51 /* CoreDataFeedStore.swift in Sources */,
+				5BA2162E24A58B9800239D51 /* CoreDataHelpers.swift in Sources */,
 				5B3DFEBF24A0110400169665 /* InMemoryFeedStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
