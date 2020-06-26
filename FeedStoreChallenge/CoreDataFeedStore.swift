@@ -23,20 +23,10 @@ public final class CoreDataFeedStore: FeedStore {
         let context = self.context
         
         context.perform {
-            let cache = ManagedCache(context: context)
-            cache.timestamp = timestamp
-            cache.images = NSOrderedSet(array: feed.map {
-                let managedFeedImage = ManagedFeedImage(context: context)
-                managedFeedImage.id = $0.id
-                managedFeedImage.url = $0.url
-                managedFeedImage.imageDescription = $0.description
-                managedFeedImage.location = $0.description
-                
-                return managedFeedImage
-            })
-            
             do {
+                ManagedCache.mapFrom((timestamp: timestamp, images: feed), in: context)
                 try context.save()
+                
                 completion(nil)
             } catch {
                 completion(error)
@@ -119,10 +109,31 @@ private class ManagedFeedImage: NSManagedObject {
     @NSManaged var location: String?
     @NSManaged var url: URL
     @NSManaged var cache: ManagedCache
+    
+    static func mapFrom(_ localImage: LocalFeedImage, in context: NSManagedObjectContext) -> ManagedFeedImage {
+        let managed = ManagedFeedImage(context: context)
+        managed.id = localImage.id
+        managed.url = localImage.url
+        managed.imageDescription = localImage.description
+        managed.location = localImage.description
+        
+        return managed
+    }
 }
 
 @objc(ManagedCache)
 private class ManagedCache: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var images: NSOrderedSet
+    
+    @discardableResult
+    static func mapFrom(_ info: (timestamp: Date, images: [LocalFeedImage]), in context: NSManagedObjectContext) -> ManagedCache {
+        let cache = ManagedCache(context: context)
+        cache.timestamp = info.timestamp
+        cache.images = NSOrderedSet(array: info.images.map {
+            return ManagedFeedImage.mapFrom($0, in: context)
+        })
+        
+        return cache
+    }
 }
